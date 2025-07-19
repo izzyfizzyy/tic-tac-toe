@@ -1,4 +1,4 @@
-# xxx
-xxx
+# Tic tac toe game
+Projekcik
 
 `kod`
