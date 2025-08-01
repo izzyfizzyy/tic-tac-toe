@@ -1,6 +1,12 @@
+from app import App
+
 def main():
-    print("Hello from tic-tac-toe!")
+    app = App()
+    app.run()
 
 
 if __name__ == "__main__":
     main()
+
+
+
