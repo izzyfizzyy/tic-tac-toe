@@ -1,3 +1,5 @@
+from game_core import GameCore
+
 class App:
     def __init__(self):
         pass
@@ -24,8 +26,10 @@ class App:
         while True:
             user_input = input()
             if user_input.lower() == "n":
-                # Gamecore.run
-                print("babajaga")
+                    game_core = GameCore()
+                    game_core.add_input()
+                    print("Wygral gracz nr:")
+                    break
 
             elif user_input.lower() == "o":
                 # select game options
