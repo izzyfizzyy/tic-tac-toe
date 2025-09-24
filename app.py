@@ -39,7 +39,7 @@ class App:
             user_input = input()
             if user_input.lower() == "n":
                 self._display_rules()
-                game.add_marker()
+                game._add_marker()
                 break
 
             elif user_input.lower() == "o":
