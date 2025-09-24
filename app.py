@@ -1,6 +1,6 @@
 import sys
 
-from game_core2 import GameCoreCopy
+from game_core import GameCore
 
 
 class App:
@@ -18,7 +18,7 @@ class App:
     @staticmethod
     def _display_rules():
         print(
-            "Choose your player (1 or 2) and put coordinates in 3x3 matrix. For example 123 meaning player 1 choose 2 row and 3 column:")
+            "Put coordinates in 3x3 matrix. For example 23 meaning 2 row and 3 column:")
         print("     1   2   3   \n 1 |   |   |   |\n 2 |   |   | X |\n 3 |   |   |   |")
 
     @staticmethod
@@ -33,13 +33,13 @@ class App:
 
     def run(self):
         self._display_welcome_screen()
-        game = GameCoreCopy()  # tworzenie instancji klasy GameCoreCopy
+        game = GameCore()  # tworzenie instancji klasy GameCoreCopy
 
         while True:
             user_input = input()
             if user_input.lower() == "n":
                 self._display_rules()
-                game._add_marker()
+                game.add_marker()
                 break
 
             elif user_input.lower() == "o":
@@ -52,5 +52,3 @@ class App:
             elif user_input.lower() == "q":
                 sys.exit()
 
-            else:
-                print("Exit")
