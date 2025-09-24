@@ -17,7 +17,7 @@ class GameCore:
 
     def _is_input_valid(self, input):
         if input >= 3:
-            return False
+            return False #try catch
         else:
             return True
 
