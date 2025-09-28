@@ -34,10 +34,11 @@ class GameCore:
                 win = 0
 
     def _is_not_occupied(self, row, col):
-        if self.board_state[row][col] == 0:
-            return True
-        else:
-            return False
+        return self.board_state[row][col] == 0
+        # if self.board_state[row][col] == 0:
+        #     return True
+        # else:
+        #     return False
 
     def _is_input_valid(self, input):
         if input >= 3:
