@@ -18,8 +18,11 @@ class App:
     @staticmethod
     def _display_rules():
         print(
-            "Put coordinates in 3x3 matrix. For example 23 meaning 2 row and 3 column:")
-        print("     1   2   3   \n 1 |   |   |   |\n 2 |   |   | X |\n 3 |   |   |   |")
+            "Quick instructions> \n Put coordinates in 3x3 matrix starting with number of row, followed by number of column."
+            " \n Example: \n Putting A3 meaning 1 row and 3 column:")
+        print("     A   B   C   \n 1 |   |   |   |\n 2 |   |   | X |\n 3 |   |   |   |"
+              "\nPlease find more information in the Help tab"
+              "\n********************************************")
 
     @staticmethod
     def _display_help_screen():
@@ -39,11 +42,11 @@ class App:
             user_input = input()
             if user_input.lower() == "n":
                 self._display_rules()
-                game.add_marker()
+                game.play_game() #
                 break
 
             elif user_input.lower() == "o":
-                # select game options
+                # select game options , user can change size of matrix
                 pass
 
             elif user_input.lower() == "h":
