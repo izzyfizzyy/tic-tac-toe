@@ -7,7 +7,7 @@ class GameCore:
 
     def __init__(self):
         self.size = 3
-        self.column_mapping = {
+        self.row_mapping = {
             'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6,
             'g': 7, 'h': 8, 'i': 9, 'j': 10, 'k': 11, 'l': 12,
             'm': 13, 'n': 14, 'o': 15, 'p': 16, 'q': 17, 'r': 18,
@@ -16,15 +16,15 @@ class GameCore:
         }
         self._reset()
 
-
     def _reset(self):
         self.turn_counter = 0
         self.max_turns = self.size ** 2
         self.board_state = np.zeros(shape=(self.size, self.size))
 
-    def _set_size(self, new_size):
-       self.size = new_size
-       self._reset()
+    def set_size(self, new_size):
+        self.size = new_size
+        print(self.size)
+        self._reset()
 
     def _check_for_winning_conditions(self, player):
         win = 0
@@ -34,7 +34,7 @@ class GameCore:
             for y in range(self.size):
                 if int(self.board_state[x][y]) == player:
                     win += 1
-            if win == 3:
+            if win == self.size:
                 print(f"Player number {player} won.")
                 sys.exit()
             else:
@@ -45,7 +45,7 @@ class GameCore:
             for x in range(self.size):
                 if int(self.board_state[x][y]) == player:
                     win += 1
-            if win == 3:
+            if win == self.size:
                 print(f"Player number {player} won.")
                 sys.exit()
             else:
@@ -55,7 +55,7 @@ class GameCore:
         for x in range(self.size):
             if int(self.board_state[x][x]) == player:
                 win += 1
-        if win == 3:
+        if win == self.size:
             print(f"Player number {player} won.")
             sys.exit()
         else:
@@ -65,7 +65,7 @@ class GameCore:
         return self.board_state[row][col] == 0
 
     def is_grid_size_ok(self, input):
-        return input <= self.size
+        return input < self.size
 
     def _get_current_player(self):
         if self.turn_counter % 2 == 0:
@@ -80,12 +80,15 @@ class GameCore:
             print(f"Player {player} turn: ")
 
             player_input = input()  # input with coordinates
-            x = re.search("^[A-Za-z](?:[0-9]|1[0-9]|2[0-6])$", player_input)
-            print(x)
+            self.validate_input_format(player_input)
 
+
+            # if x:
             row = player_input[0]
-            row = self.column_mapping[row.lower()] - 1
-            col = int(player_input[1:]) - 1 # to nie zadziala jak bd liczba wieksza od 9
+            row = self.row_mapping[row.lower()] - 1
+            col = int(player_input[1:]) - 1  # to nie zadziala jak bd liczba wieksza od 9
+            print(f"kolumna:{col}")
+            print(f"row: {row}, col: {col}")
 
             if self.is_grid_size_ok(row) and self.is_grid_size_ok(col) and self._is_not_occupied(row,
                                                                                                  col):  # check whether coordinates don't exceed the grid size + if the place is available +
@@ -97,10 +100,20 @@ class GameCore:
 
             elif not self._is_not_occupied(row, col):
                 print("This place is occupied by your opponent. Please change your input.")
-            else:
+            elif not self.is_grid_size_ok(row) or not self.is_grid_size_ok(col):  # to mi nie dziala
                 print("Your coordinates exceed the matrix size. Please change your input.")
-
+                break
+            # else:
+            #     print(
+            #         "Please change format of your input. It should start with letter pointing row position, followed by number for column position.")
         sys.exit()
+
+    @staticmethod
+    def validate_input_format(player_input):
+        match_found = re.search("^[A-Za-z](?:[0-9]|1[0-9]|2[0-6])$", player_input)
+
+        if not match_found:
+            raise RuntimeError("No match")
 
     def _play_board_status(self):
         pass
