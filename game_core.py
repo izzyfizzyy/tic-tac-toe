@@ -65,13 +65,27 @@ class GameCore:
         return self.board_state[row][col] == 0
 
     def is_grid_size_ok(self, input):
-        return input < self.size
+        return input <= self.size
+
+    def validate_input_fits_on_board(self, col, row):
+        return self.is_grid_size_ok(row) and self.is_grid_size_ok(col)
 
     def _get_current_player(self):
         if self.turn_counter % 2 == 0:
             return 1
         else:
             return 2
+
+    @staticmethod
+    def validate_input_format(player_input):
+        match_found = re.search("^[A-Za-z](?:[0-9]|1[0-9]|2[0-6])$", player_input)
+
+        if not match_found:
+            raise RuntimeError(f"Input: {player_input} does not match required format")
+
+
+    def _play_board_status(self):
+        pass
 
     def play_game(self):
 
@@ -80,40 +94,30 @@ class GameCore:
             print(f"Player {player} turn: ")
 
             player_input = input()  # input with coordinates
-            self.validate_input_format(player_input)
 
+            try:
+                self.validate_input_format(player_input)
+            except RuntimeError as e:
+                print(e)
+                continue
 
-            # if x:
             row = player_input[0]
             row = self.row_mapping[row.lower()] - 1
-            col = int(player_input[1:]) - 1  # to nie zadziala jak bd liczba wieksza od 9
-            print(f"kolumna:{col}")
-            print(f"row: {row}, col: {col}")
+            col = int(player_input[1:]) - 1
 
-            if self.is_grid_size_ok(row) and self.is_grid_size_ok(col) and self._is_not_occupied(row,
-                                                                                                 col):  # check whether coordinates don't exceed the grid size + if the place is available +
-                player = self._get_current_player()  # which player's turn is it currently
+            if self.validate_input_fits_on_board(col, row) and self._is_not_occupied(row,col):
+
                 self.board_state[row][col] = player
                 self._check_for_winning_conditions(player)
                 print(self.board_state)
                 self.turn_counter += 1
 
-            elif not self._is_not_occupied(row, col):
-                print("This place is occupied by your opponent. Please change your input.")
-            elif not self.is_grid_size_ok(row) or not self.is_grid_size_ok(col):  # to mi nie dziala
+            elif not self.validate_input_fits_on_board(col, row):
                 print("Your coordinates exceed the matrix size. Please change your input.")
+            else:
+                print("This place is occupied by your opponent. Please change your input.")
                 break
-            # else:
-            #     print(
-            #         "Please change format of your input. It should start with letter pointing row position, followed by number for column position.")
+
+
         sys.exit()
 
-    @staticmethod
-    def validate_input_format(player_input):
-        match_found = re.search("^[A-Za-z](?:[0-9]|1[0-9]|2[0-6])$", player_input)
-
-        if not match_found:
-            raise RuntimeError("No match")
-
-    def _play_board_status(self):
-        pass
