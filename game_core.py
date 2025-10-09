@@ -1,6 +1,9 @@
-import sys
 import re
+import sys
+
 import numpy as np
+
+from exception import OccupationError
 
 
 class GameCore:
@@ -52,8 +55,8 @@ class GameCore:
                 win = 0
 
         # checking skew
-        for x in range(self.size):
-            if int(self.board_state[x][x]) == player:
+        for c in range(self.size):
+            if int(self.board_state[c][c]) == player:
                 win += 1
         if win == self.size:
             print(f"Player number {player} won.")
@@ -61,13 +64,32 @@ class GameCore:
         else:
             win = 0
 
-    def _is_not_occupied(self, row, col):
+
+        # checking skew 2
+        for c in range(self.size -1, -1, -1):
+            if int(self.board_state[c][c]) == player:
+                win += 1
+                print(f"win {win}")
+                print(f"licznik {c}")
+        if win == self.size:
+            print(f"Player number {player} won.")
+            sys.exit()
+        else:
+            win = 0
+
+    def _is_not_occupied(self, player_input):
+        row = player_input[0]
+        row = self.row_mapping[row.lower()] - 1
+        col = int(player_input[1:]) - 1
         return self.board_state[row][col] == 0
 
     def is_grid_size_ok(self, input):
         return input <= self.size
 
-    def validate_input_fits_on_board(self, col, row):
+    def validate_input_fits_on_board(self, player_input):
+        row = player_input[0]
+        row = self.row_mapping[row.lower()] - 1
+        col = int(player_input[1:]) - 1
         return self.is_grid_size_ok(row) and self.is_grid_size_ok(col)
 
     def _get_current_player(self):
@@ -76,20 +98,25 @@ class GameCore:
         else:
             return 2
 
-    @staticmethod
-    def validate_input_format(player_input):
+
+    def validate_input_format(self, player_input):
         match_found = re.search("^[A-Za-z](?:[0-9]|1[0-9]|2[0-6])$", player_input)
 
         if not match_found:
-            raise RuntimeError(f"Input: {player_input} does not match required format")
+            raise TypeError(f"Input: {player_input} does not match required format.")
 
+        if not self.validate_input_fits_on_board(player_input):
+            raise ValueError(f"Input: {player_input} exceeds the grid size.")
+
+        if not self._is_not_occupied(player_input):
+            raise OccupationError(f"Position {player_input} is already occupied.", 000)
 
     def _play_board_status(self):
         pass
 
     def play_game(self):
 
-        while self.turn_counter < self.max_turns:  # zmienic na max turns
+        while self.turn_counter < self.max_turns:
             player = self._get_current_player()
             print(f"Player {player} turn: ")
 
@@ -97,27 +124,31 @@ class GameCore:
 
             try:
                 self.validate_input_format(player_input)
-            except RuntimeError as e:
+            except TypeError as e:
                 print(e)
+                continue
+            except ValueError as v:
+                print(v)
+                continue
+            except OccupationError as o:
+                print(o)
                 continue
 
             row = player_input[0]
             row = self.row_mapping[row.lower()] - 1
             col = int(player_input[1:]) - 1
 
-            if self.validate_input_fits_on_board(col, row) and self._is_not_occupied(row,col):
+            #if self.validate_input_fits_on_board(col, row) and self._is_not_occupied(row, col):
 
-                self.board_state[row][col] = player
-                self._check_for_winning_conditions(player)
-                print(self.board_state)
-                self.turn_counter += 1
+            self.board_state[row][col] = player
+            self._check_for_winning_conditions(player)
+            print(self.board_state)
+            self.turn_counter += 1
 
-            elif not self.validate_input_fits_on_board(col, row):
-                print("Your coordinates exceed the matrix size. Please change your input.")
-            else:
-                print("This place is occupied by your opponent. Please change your input.")
-                break
-
+            #elif not self.validate_input_fits_on_board(col, row):
+                #print("Your coordinates exceed the matrix size. Please change your input.")
+            #else:
+                #print("This place is occupied by your opponent. Please change your input.")
+                #break
 
         sys.exit()
-
