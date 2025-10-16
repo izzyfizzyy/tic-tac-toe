@@ -34,25 +34,16 @@ class GameCore:
 
         # checking per each row
         for x in range(self.size):
-            for y in range(self.size):
-                if int(self.board_state[x][y]) == player:
-                    win += 1
-            if win == self.size:
+            if np.all(self.board_state[x, :] == player):
                 print(f"Player number {player} won.")
                 sys.exit()
-            else:
-                win = 0
+
 
         # checking per each column
         for y in range(self.size):
-            for x in range(self.size):
-                if int(self.board_state[x][y]) == player:
-                    win += 1
-            if win == self.size:
+            if np.all(self.board_state[x, :] == player):
                 print(f"Player number {player} won.")
                 sys.exit()
-            else:
-                win = 0
 
         # checking skew
         for c in range(self.size):
@@ -66,16 +57,20 @@ class GameCore:
 
 
         # checking skew 2
-        for c in range(self.size -1, -1, -1):
-            if int(self.board_state[c][c]) == player:
+        counter_x = self.size - 1
+        counter_y = 0
+
+        while counter_x >= 0:
+            if int(self.board_state[counter_x][counter_y]) == player:
                 win += 1
-                print(f"win {win}")
-                print(f"licznik {c}")
+            counter_x -= 1
+            counter_y += 1
+
         if win == self.size:
-            print(f"Player number {player} won.")
-            sys.exit()
+                print(f"Player number {player} won.")
+                sys.exit()
         else:
-            win = 0
+                win = 0
 
     def _is_not_occupied(self, player_input):
         row = player_input[0]
@@ -112,7 +107,12 @@ class GameCore:
             raise OccupationError(f"Position {player_input} is already occupied.", 000)
 
     def _play_board_status(self):
-        pass
+        print("    1   2   3")
+        print("  -------------")
+        for i, row_label in enumerate(["A", "B", "C"]):
+            row = " | ".join(self.board_state[i])
+            print(f"{row_label} | {row} |")
+            print("  -------------")
 
     def play_game(self):
 
