@@ -38,7 +38,6 @@ class GameCore:
                 print(f"Player number {player} won.")
                 sys.exit()
 
-
         # checking per each column
         for y in range(self.size):
             if np.all(self.board_state[x, :] == player):
