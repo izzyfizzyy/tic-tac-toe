@@ -40,7 +40,7 @@ class GameCore:
 
         # checking per each column
         for y in range(self.size):
-            if np.all(self.board_state[x, :] == player):
+            if np.all(self.board_state[y, :] == player):
                 print(f"Player number {player} won.")
                 sys.exit()
 
@@ -92,7 +92,6 @@ class GameCore:
         else:
             return 2
 
-
     def validate_input_format(self, player_input):
         match_found = re.search("^[A-Za-z](?:[0-9]|1[0-9]|2[0-6])$", player_input)
 
@@ -105,13 +104,14 @@ class GameCore:
         if not self._is_not_occupied(player_input):
             raise OccupationError(f"Position {player_input} is already occupied.", 000)
 
-    def _play_board_status(self):
-        print("    1   2   3")
-        print("  -------------")
-        for i, row_label in enumerate(["A", "B", "C"]):
-            row = " | ".join(self.board_state[i])
+    def display_board(self):
+        print("    " + "   ".join(str(i + 1) for i in range(self.size)))
+        symbols = {0: " ", 1: "X", 2: "O"}
+
+        for i in range(self.size):
+            row_label = chr(ord("A") + i)
+            row = " | ".join(symbols.get(v, "?") for v in self.board_state[i])
             print(f"{row_label} | {row} |")
-            print("  -------------")
 
     def play_game(self):
 
@@ -137,17 +137,9 @@ class GameCore:
             row = self.row_mapping[row.lower()] - 1
             col = int(player_input[1:]) - 1
 
-            #if self.validate_input_fits_on_board(col, row) and self._is_not_occupied(row, col):
-
             self.board_state[row][col] = player
             self._check_for_winning_conditions(player)
-            print(self.board_state)
+            self.display_board()
             self.turn_counter += 1
-
-            #elif not self.validate_input_fits_on_board(col, row):
-                #print("Your coordinates exceed the matrix size. Please change your input.")
-            #else:
-                #print("This place is occupied by your opponent. Please change your input.")
-                #break
 
         sys.exit()
